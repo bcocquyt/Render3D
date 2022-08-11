@@ -16,10 +16,13 @@ namespace HelixRenderer
         private string fileName;
         private int filePos;
         public List<Point3D> points = new List<Point3D>();
-        private string[] fileContents;
+        public string[] FileContents;
         private string currentLine;
         private string currentPosition;
         private GCodeParser parse;
+
+
+        public int CurrentLineNumber { get { return filePos; } }
 
         public string CurrentLine
         {
@@ -49,17 +52,47 @@ namespace HelixRenderer
             }
         }
 
+        public void AddPoints(IEnumerable<Point3D> newPoints)
+        {
+            {
+                this.points.AddRange(newPoints);
+                RaisePropertyChanged("Points");
+                UpdateModel();
+            }
+        }
+
         public void ReadNextLine()
         {
             if (!string.IsNullOrEmpty(this.fileName))
             {
-                if (filePos < fileContents.Length-1)
+                if (filePos < FileContents.Length-1)
                 {
                     filePos++;
-                    this.CurrentLine = fileContents[filePos];
+                    this.CurrentLine = FileContents[filePos];
                     parser.GCode_Command = this.CurrentLine;
-                    parser.Process_Parsed_Command();
-                    this.CurrentPosition = $"Position: {filePos}/{fileContents.Length}";
+                    this.AddPoints(parser.Process_Parsed_Command());
+                    this.CurrentPosition = $"Position: {filePos}/{FileContents.Length}";
+                }
+            }
+        }
+
+        public void ReadMultipleLines(int numberOfLines)
+        {
+            if (!string.IsNullOrEmpty(this.fileName))
+            {
+                if (filePos < FileContents.Length - 1)
+                {
+                    List<Point3D> newPoints = new List<Point3D>();
+                    for (int i = 0; i < numberOfLines; i++)
+                    {
+                        if (filePos > FileContents.Length - 2) break;
+                        filePos++;
+                        this.CurrentLine = FileContents[filePos];
+                        parser.GCode_Command = this.CurrentLine;
+                        newPoints.AddRange(parser.Process_Parsed_Command());
+                    }
+                    this.AddPoints(newPoints);
+                    this.CurrentPosition = $"Position: {filePos}/{FileContents.Length}";
                 }
             }
         }
@@ -71,7 +104,7 @@ namespace HelixRenderer
             {
                 this.fileName = value;
                 filePos = 0;
-                fileContents = System.IO.File.ReadAllLines(this.FileName);
+                FileContents = System.IO.File.ReadAllLines(this.FileName);
                 RaisePropertyChanged("FileName");
             }
         }

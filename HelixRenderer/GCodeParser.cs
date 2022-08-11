@@ -1,14 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace HelixRenderer
 {
     internal class GCodeParser
     {
         private string gcode_command;
+        private List<Point3D> newPoints;
 
         public string GCode_Command 
         { 
@@ -24,31 +27,40 @@ namespace HelixRenderer
 
         public GCodeParser()
         {
-
+            newPoints = new List<Point3D>();
         }
 
-        public void Process_Parsed_Command()
+        public List<Point3D> Process_Parsed_Command()
         {
+            newPoints.Clear();
             gcode_command.ToUpper();
-            if (gcode_command.IndexOf('G') > -1)
+            try
             {
-                switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('G') + 1, 1)))
+                if (gcode_command.IndexOf('G') > -1)
                 {
-                    case 0:
-                    case 1: gcode_G0_G1(); break;
-                    case 2: gcode_G2_G3(true); break;
-                    case 3: gcode_G2_G3(false); break;
-                    case 4: gcode_G4(); break;
+                    switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('G') + 1, 1)))
+                    {
+                        case 0:
+                        case 1: gcode_G0_G1(); break;
+                        case 2: gcode_G2_G3(true); break;
+                        case 3: gcode_G2_G3(false); break;
+                        case 4: gcode_G4(); break;
+                    }
+                }
+                else if (gcode_command.IndexOf('M') > -1)
+                {
+                    switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('M') + 1, 1)))
+                    {
+                        case 3: gcode_M3(); break;
+                        case 4: gcode_M5(); break;
+                    }
                 }
             }
-            else if (gcode_command.IndexOf('M') > -1)
+            catch (Exception)
             {
-                switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('M') + 1, 1)))
-                {
-                    case 3: gcode_M3(); break;
-                    case 4: gcode_M5(); break;
-                }
+                //
             }
+            return newPoints;
         }
 
         void gcode_G0_G1()
@@ -59,21 +71,21 @@ namespace HelixRenderer
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('Y') - gcode_command.IndexOf('X') - 1));
+                            gcode_command.IndexOf('Y') - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('Z') > -1) 
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(
                             gcode_command.Substring(gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('X')));
+                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('X')), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('S') > -1) 
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('S') - gcode_command.IndexOf('X') - 1));
+                            gcode_command.IndexOf('S') - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(
                             gcode_command.Substring(gcode_command.IndexOf('X') + 1, 
-                            gcode_command.Length - gcode_command.IndexOf('X') - 1));
+                            gcode_command.Length - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
             }
             if (gcode_command.IndexOf('Y') > -1)
             {
@@ -81,16 +93,16 @@ namespace HelixRenderer
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('S') > -1) 
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.Length - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.Length - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
             }
 
             if (gcode_command.IndexOf('Z') > -1)
@@ -99,14 +111,14 @@ namespace HelixRenderer
                     Stepper.destination[Stepper.Z_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Z') + 1, 
-                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Z') - 1));
+                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Z') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Z_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Z') + 1, 
-                            gcode_command.Length - gcode_command.IndexOf('Z') - 1));
+                            gcode_command.Length - gcode_command.IndexOf('Z') - 1), CultureInfo.InvariantCulture);
             }
 
-            Stepper.buffer_line_to_destination();
+            Stepper.buffer_line_to_destination(newPoints);
             Stepper.print_position();
         }
 
@@ -118,21 +130,21 @@ namespace HelixRenderer
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(
                             gcode_command.Substring(gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('Y') - gcode_command.IndexOf('X') - 1));
+                            gcode_command.IndexOf('Y') - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('Z') > -1) 
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('X') - 1));
+                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('S') > -1) 
                     Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('X') + 1, 
-                            gcode_command.IndexOf('S') - gcode_command.IndexOf('X') - 1));
+                            gcode_command.IndexOf('S') - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.X_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('X') + 1, 
-                            gcode_command.Length - gcode_command.IndexOf('X') - 1));
+                            gcode_command.Length - gcode_command.IndexOf('X') - 1), CultureInfo.InvariantCulture);
             }
             if (gcode_command.IndexOf('Y') > -1)
             {
@@ -140,16 +152,16 @@ namespace HelixRenderer
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else if (gcode_command.IndexOf('S') > -1) 
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
-                            gcode_command.Length - gcode_command.IndexOf('Y') - 1));
+                            gcode_command.Length - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
             }
 
             double[] arc_offset = { 0.0, 0.0 };
@@ -162,10 +174,10 @@ namespace HelixRenderer
                 if (gcode_command.IndexOf('S') > -1) 
                     r = double.Parse(gcode_command.Substring(
                         gcode_command.IndexOf('R') + 1, 
-                        gcode_command.IndexOf('S') - gcode_command.IndexOf('R') - 1));
+                        gcode_command.IndexOf('S') - gcode_command.IndexOf('R') - 1), CultureInfo.InvariantCulture);
                 else r = double.Parse(gcode_command.Substring(
                     gcode_command.IndexOf('R') + 1, 
-                    gcode_command.Length - gcode_command.IndexOf('R') - 1));
+                    gcode_command.Length - gcode_command.IndexOf('R') - 1), CultureInfo.InvariantCulture);
 
                 if ((r > 0) && (p2 != p1 || q2 != q1))
                 {
@@ -188,16 +200,16 @@ namespace HelixRenderer
                         arc_offset[0] =
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('I') + 1, 
-                                gcode_command.IndexOf('J') - gcode_command.IndexOf('I') - 1));
+                                gcode_command.IndexOf('J') - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
                     else if (gcode_command.IndexOf('S') > -1) 
                         arc_offset[0] =
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('I') + 1, 
-                                gcode_command.IndexOf('S') - gcode_command.IndexOf('I') - 1));
+                                gcode_command.IndexOf('S') - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
                     else arc_offset[0] =
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('I') + 1, 
-                                gcode_command.Length - gcode_command.IndexOf('I') - 1));
+                                gcode_command.Length - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
                 }
                 if (gcode_command.IndexOf('J') > -1)
                 {
@@ -205,10 +217,10 @@ namespace HelixRenderer
                         arc_offset[1] =
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('J') + 1, 
-                                gcode_command.IndexOf('S') - gcode_command.IndexOf('J') - 1));
+                                gcode_command.IndexOf('S') - gcode_command.IndexOf('J') - 1), CultureInfo.InvariantCulture);
                     else arc_offset[1] = double.Parse(gcode_command.Substring(
                         gcode_command.IndexOf('J') + 1, 
-                        gcode_command.Length - gcode_command.IndexOf('J') - 1));
+                        gcode_command.Length - gcode_command.IndexOf('J') - 1), CultureInfo.InvariantCulture);
                 }
             }
             Serial.print("G23 X"); Serial.print(Stepper.destination[Stepper.X_AXIS]);
@@ -216,7 +228,7 @@ namespace HelixRenderer
             Serial.print("I"); Serial.print(arc_offset[0]);
             Serial.print("J"); Serial.println(arc_offset[1]);
 
-            Stepper.buffer_arc_to_destination(arc_offset, clockwise);
+            Stepper.buffer_arc_to_destination(newPoints, arc_offset, clockwise);
         }
 
         public void gcode_G4()

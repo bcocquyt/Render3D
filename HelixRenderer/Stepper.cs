@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Media.Media3D;
 
 namespace HelixRenderer
 {
@@ -94,7 +95,7 @@ namespace HelixRenderer
             target_steps_m2 = (int)Math.Round(Math.Sqrt(dx * dx + dy * dy) / DEFAULT_XY_MM_PER_STEP);
         }
 
-        static void stepper_init()
+        static void stepper_init(List<Point3D> newPoints)
         {
             int target_steps_m1, target_steps_m2;
             IK(0, 0, out target_steps_m1, out target_steps_m2);
@@ -117,14 +118,16 @@ namespace HelixRenderer
             destination[Z_AXIS] = 1;
             destination[X_AXIS] = 0;
             destination[Y_AXIS] = 0;
-            buffer_line_to_destination();
+            buffer_line_to_destination(newPoints);
             ps = PEN_UP_ANGLE;
             pen.write(ps);
         }
 
         //直接由当前位置移动到目标位置
-        static void moveto(double target_X, double target_Y)
+        static void moveto(List<Point3D> newPoints, double target_X, double target_Y)
         {
+            //newPoints.Add(new Point3D(target_X, target_Y, current_position[Z_AXIS]));
+
             int target_steps_m1, target_steps_m2;
             IK(target_X, target_Y, out target_steps_m1, out target_steps_m2);
             long dif_abs_steps_run_m1 = Math.Abs(target_steps_m1 - current_steps_M1);
@@ -168,8 +171,9 @@ namespace HelixRenderer
             current_position[Y_AXIS] = target_Y;
         }
 
-        public static void buffer_line_to_destination()
+        public static void buffer_line_to_destination(List<Point3D> newPoints)
         {
+            newPoints.Add(new Point3D(destination[X_AXIS], destination[Y_AXIS], current_position[Z_AXIS]));
             double cartesian_mm = Math.Sqrt((current_position[X_AXIS] - destination[X_AXIS]) * (current_position[X_AXIS] - destination[X_AXIS])
                         + (current_position[Y_AXIS] - destination[Y_AXIS]) * (current_position[Y_AXIS] - destination[Y_AXIS]));
 
@@ -190,7 +194,7 @@ namespace HelixRenderer
                 }
             }
 
-            if (cartesian_mm <= DEFAULT_XY_MM_PER_STEP) { moveto(destination[X_AXIS], destination[Y_AXIS]); return; }
+            if (cartesian_mm <= DEFAULT_XY_MM_PER_STEP) { moveto(newPoints, destination[X_AXIS], destination[Y_AXIS]); return; }
 
             int steps = (int)Math.Floor(cartesian_mm / DEFAULT_XY_MM_PER_STEP);
             double init_X = current_position[X_AXIS];
@@ -199,10 +203,10 @@ namespace HelixRenderer
             for (long s = 0; s <= steps; ++s)
             {
                 scale = (float)s / (float)steps;
-                moveto((destination[X_AXIS] - init_X) * scale + init_X,
+                moveto(newPoints, (destination[X_AXIS] - init_X) * scale + init_X,
                      (destination[Y_AXIS] - init_Y) * scale + init_Y);
             }
-            moveto(destination[X_AXIS], destination[Y_AXIS]);
+            moveto(newPoints, destination[X_AXIS], destination[Y_AXIS]);
         }
 
         public static double Hypot2(double x, double y)
@@ -224,9 +228,8 @@ namespace HelixRenderer
             return x * x;
         }
 
-        public static void buffer_arc_to_destination(double[] offset, bool clockwise)
+        public static void buffer_arc_to_destination(List<Point3D> newPoints, double[] offset, bool clockwise)
         {
-
             double r_P = -offset[0], r_Q = -offset[1];
             int p_axis = X_AXIS, q_axis = Y_AXIS, l_axis = Z_AXIS;
             double radius = Hypot(r_P, r_Q),
@@ -278,7 +281,7 @@ namespace HelixRenderer
                 raw[p_axis] = center_P + r_P;
                 raw[q_axis] = center_Q + r_Q;
 
-                moveto(raw[p_axis], raw[q_axis]); //逆解执行函数
+                moveto(newPoints, raw[p_axis], raw[q_axis]); //逆解执行函数
 
                 Serial.print("G0 X");
                 Serial.print(raw[p_axis]);

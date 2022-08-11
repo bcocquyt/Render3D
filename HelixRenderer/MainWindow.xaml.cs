@@ -30,7 +30,7 @@ namespace HelixRenderer
         private MainViewModel vm = new MainViewModel();
 
         public MainWindow()
-        {
+        { 
             InitializeComponent();
             this.DataContext = vm;
             vm.DirectionArrows = true;
@@ -74,12 +74,29 @@ namespace HelixRenderer
 
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
         {
-            vm.FileName = @"C:\Users\BartCocquyt\source\repos\WalldrawBcocquyt\NC\Dakar A4竖.nc";
+            //vm.FileName = @"C:\Users\BartCocquyt\source\repos\WalldrawBcocquyt\NC\Dakar A4竖.nc";
+            vm.FileName = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests\output_0012.ngc";
         }
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
         {
             vm.ResetPoints(new Point3D(0, 0, 0));
+        }
+
+        private void btnNext100_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ReadMultipleLines(100);
+        }
+
+        private void btnNext1000_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ReadMultipleLines(1000);
+        }
+
+        private void btnRemaining_Click(object sender, RoutedEventArgs e)
+        {
+            int remainginLineCount = vm.FileContents.Length - vm.CurrentLineNumber - 1;
+            vm.ReadMultipleLines(remainginLineCount);
         }
     }
 }
