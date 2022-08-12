@@ -5,6 +5,10 @@ VisualStudioVersion = 17.2.32616.157
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "HelixRenderer", "HelixRenderer\HelixRenderer.csproj", "{2A2375BB-CB51-423C-9C24-DE5F396FE2AA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Render3DTests", "Render3DTests\Render3DTests.csproj", "{C8AAAFC7-8CB0-4965-A5D3-854F6C3B7F74}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Render3DLib", "Render3DLib\Render3DLib.csproj", "{BBCD884C-2788-4A78-9B7F-7C319B1D7815}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{2A2375BB-CB51-423C-9C24-DE5F396FE2AA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2A2375BB-CB51-423C-9C24-DE5F396FE2AA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2A2375BB-CB51-423C-9C24-DE5F396FE2AA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C8AAAFC7-8CB0-4965-A5D3-854F6C3B7F74}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C8AAAFC7-8CB0-4965-A5D3-854F6C3B7F74}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C8AAAFC7-8CB0-4965-A5D3-854F6C3B7F74}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C8AAAFC7-8CB0-4965-A5D3-854F6C3B7F74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BBCD884C-2788-4A78-9B7F-7C319B1D7815}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BBCD884C-2788-4A78-9B7F-7C319B1D7815}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BBCD884C-2788-4A78-9B7F-7C319B1D7815}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BBCD884C-2788-4A78-9B7F-7C319B1D7815}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

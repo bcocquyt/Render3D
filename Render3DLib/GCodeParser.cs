@@ -6,9 +6,9 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace HelixRenderer
+namespace Render3DLib
 {
-    internal class GCodeParser
+    public  class GCodeParser
     {
         private string gcode_command;
         private List<Point3D> newPoints;
@@ -21,7 +21,7 @@ namespace HelixRenderer
             } 
             set 
             { 
-                this.gcode_command = value; 
+                this.gcode_command = GCodeSanitizer.Sanitize(value); 
             } 
         }
 

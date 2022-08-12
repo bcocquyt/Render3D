@@ -6,6 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 using HelixToolkit.Wpf;
+using Render3DLib;
 
 namespace HelixRenderer
 {
@@ -20,7 +21,6 @@ namespace HelixRenderer
         private string currentLine;
         private string currentPosition;
         private GCodeParser parse;
-
 
         public int CurrentLineNumber { get { return filePos; } }
 

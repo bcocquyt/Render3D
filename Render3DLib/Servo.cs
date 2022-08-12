@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HelixRenderer
+namespace Render3DLib
 {
     public class Servo
     {

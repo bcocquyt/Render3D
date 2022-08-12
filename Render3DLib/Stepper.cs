@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Media.Media3D;
 
-namespace HelixRenderer
+namespace Render3DLib
 {
     public class Stepper
     {

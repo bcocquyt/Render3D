@@ -12,9 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Petzold.Media3D">
-      <HintPath>Petzold.Media3D.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\Render3DLib\Render3DLib.csproj" />
   </ItemGroup>
 
 </Project>
