@@ -97,5 +97,15 @@ namespace HelixRenderer
             int remainginLineCount = vm.FileContents.Length - vm.CurrentLineNumber - 1;
             vm.ReadMultipleLines(remainginLineCount);
         }
+
+        private void btnNext10_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ReadMultipleLines(10);
+        }
+
+        private void btnNext5_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ReadMultipleLines(5);
+        }
     }
 }

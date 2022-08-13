@@ -36,7 +36,8 @@ namespace Render3DLib
             gcode_command.ToUpper();
             try
             {
-                if (gcode_command.IndexOf('G') > -1)
+                if (gcode_command.IndexOf("G21") > -1) gcode_G21();
+                else if (gcode_command.IndexOf('G') > -1)
                 {
                     switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('G') + 1, 1)))
                     {
@@ -107,11 +108,16 @@ namespace Render3DLib
 
             if (gcode_command.IndexOf('Z') > -1)
             {
-                if (gcode_command.IndexOf('S') > -1) 
+                if (gcode_command.IndexOf('S') > -1)
                     Stepper.destination[Stepper.Z_AXIS] =
                         double.Parse(gcode_command.Substring(
-                            gcode_command.IndexOf('Z') + 1, 
+                            gcode_command.IndexOf('Z') + 1,
                             gcode_command.IndexOf('S') - gcode_command.IndexOf('Z') - 1), CultureInfo.InvariantCulture);
+                else if (gcode_command.IndexOf('F') > -1)
+                    Stepper.destination[Stepper.Z_AXIS] =
+                        double.Parse(gcode_command.Substring(
+                            gcode_command.IndexOf('Z') + 1,
+                            gcode_command.IndexOf('F') - gcode_command.IndexOf('Z') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Z_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Z') + 1, 
@@ -213,11 +219,16 @@ namespace Render3DLib
                 }
                 if (gcode_command.IndexOf('J') > -1)
                 {
-                    if (gcode_command.IndexOf('S') > -1) 
+                    if (gcode_command.IndexOf('S') > -1)
                         arc_offset[1] =
                             double.Parse(gcode_command.Substring(
-                                gcode_command.IndexOf('J') + 1, 
+                                gcode_command.IndexOf('J') + 1,
                                 gcode_command.IndexOf('S') - gcode_command.IndexOf('J') - 1), CultureInfo.InvariantCulture);
+                    else if (gcode_command.IndexOf('F') > -1)
+                        arc_offset[1] =
+                            double.Parse(gcode_command.Substring(
+                                gcode_command.IndexOf('J') + 1,
+                                gcode_command.IndexOf('F') - gcode_command.IndexOf('J') - 1), CultureInfo.InvariantCulture);
                     else arc_offset[1] = double.Parse(gcode_command.Substring(
                         gcode_command.IndexOf('J') + 1, 
                         gcode_command.Length - gcode_command.IndexOf('J') - 1), CultureInfo.InvariantCulture);
@@ -229,6 +240,11 @@ namespace Render3DLib
             Serial.print("J"); Serial.println(arc_offset[1]);
 
             Stepper.buffer_arc_to_destination(newPoints, arc_offset, clockwise);
+        }
+
+        public void gcode_G21()
+        {
+            Serial.println("G21");
         }
 
         public void gcode_G4()

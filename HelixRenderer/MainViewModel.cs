@@ -103,9 +103,14 @@ namespace HelixRenderer
             set
             {
                 this.fileName = value;
-                filePos = 0;
+                filePos = -1;
                 FileContents = System.IO.File.ReadAllLines(this.FileName);
                 RaisePropertyChanged("FileName");
+                ResetPoints(new Point3D(0, 0, 0));
+                List<Point3D> newPoints = new List<Point3D>();
+                Stepper.stepper_init(newPoints);
+                newPoints.AddRange(newPoints);
+                ReadNextLine();
             }
         }
         public void ResetPoints(Point3D p)
@@ -165,32 +170,56 @@ namespace HelixRenderer
             // create the WPF3D model
             var m = new Model3DGroup();
             var gm = new MeshBuilder();
+            var gm2 = new MeshBuilder();
 
-            if (path.Count > 2)
+            foreach (Point3D p in path)
             {
-                gm.AddTube(path, 0.8, 10, false);
-                if (directionArrows)
-                {
-                    // sphere at the initial point
-                    gm.AddSphere(path[0], 1);
-                    // arrow heads every 100 point
-                    for (int i = 100; i + 1 < path.Count; i += 100)
-                    {
-                        gm.AddArrow(path[i], path[i + 1], 0.8);
-                    }
-                    // arrow head at the end
-                    Point3D p0 = path[path.Count - 2];
-                    Point3D p1 = path[path.Count - 1];
-                    var d = new Vector3D(p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
-                    d.Normalize();
-                    Point3D p2 = p1 + d * 2;
-                    gm.AddArrow(p1, p2, 0.8);
-                }
+                gm2.AddSphere(p, 0.4);
+            }
+            m.Children.Add(new GeometryModel3D(gm2.ToMesh(), Materials.Red));
+
+            if (path.Count > 1)
+            {
+                gm.AddTube(path, 0.4, 10, false);
+                //if (directionArrows)
+                //{
+                //    // sphere at the initial point
+                //    gm.AddSphere(path[0], 1);
+                //    // arrow heads every 100 point
+                //    for (int i = 100; i + 1 < path.Count; i += 100)
+                //    {
+                //        gm.AddArrow(path[i], path[i + 1], 0.8);
+                //    }
+                //    // arrow head at the end
+                //    Point3D p0 = path[path.Count - 2];
+                //    Point3D p1 = path[path.Count - 1];
+                //    var d = new Vector3D(p1.X - p0.X, p1.Y - p0.Y, p1.Z - p0.Z);
+                //    d.Normalize();
+                //    Point3D p2 = p1 + d * 2;
+                //    gm.AddArrow(p1, p2, 0.8);
+                //}
 
                 m.Children.Add(new GeometryModel3D(gm.ToMesh(), Materials.Gold));
             }
 
             Model = m;
+        }
+
+        public String Points 
+        { 
+            get 
+            {
+                string pointString = string.Empty;
+                foreach (Point3D p in points)
+                {
+                    pointString += p.ToString() + Environment.NewLine; 
+                }
+                return pointString; 
+            }
+            set
+            {
+                Console.WriteLine(value);
+            }
         }
     }
 }

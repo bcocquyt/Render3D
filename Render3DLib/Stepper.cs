@@ -95,7 +95,7 @@ namespace Render3DLib
             target_steps_m2 = (int)Math.Round(Math.Sqrt(dx * dx + dy * dy) / DEFAULT_XY_MM_PER_STEP);
         }
 
-        static void stepper_init(List<Point3D> newPoints)
+        public static void stepper_init(List<Point3D> newPoints)
         {
             int target_steps_m1, target_steps_m2;
             IK(0, 0, out target_steps_m1, out target_steps_m2);
@@ -109,6 +109,7 @@ namespace Render3DLib
             //m2.setSpeedInStepsPerSecond(10000);
             //m2.setAccelerationInStepsPerSecondPerSecond(100000);
             //舵机初始化
+            pen = new Servo();
             //pen.attach(A0);
 
             current_position[Z_AXIS] = 0;
@@ -123,11 +124,15 @@ namespace Render3DLib
             pen.write(ps);
         }
 
-        //直接由当前位置移动到目标位置
         static void moveto(List<Point3D> newPoints, double target_X, double target_Y)
         {
-            //newPoints.Add(new Point3D(target_X, target_Y, current_position[Z_AXIS]));
+            moveto(target_X, target_Y);
+            newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+        }
 
+        //直接由当前位置移动到目标位置
+        static void moveto(double target_X, double target_Y)
+        {
             int target_steps_m1, target_steps_m2;
             IK(target_X, target_Y, out target_steps_m1, out target_steps_m2);
             long dif_abs_steps_run_m1 = Math.Abs(target_steps_m1 - current_steps_M1);
@@ -173,26 +178,10 @@ namespace Render3DLib
 
         public static void buffer_line_to_destination(List<Point3D> newPoints)
         {
-            newPoints.Add(new Point3D(destination[X_AXIS], destination[Y_AXIS], current_position[Z_AXIS]));
             double cartesian_mm = Math.Sqrt((current_position[X_AXIS] - destination[X_AXIS]) * (current_position[X_AXIS] - destination[X_AXIS])
                         + (current_position[Y_AXIS] - destination[Y_AXIS]) * (current_position[Y_AXIS] - destination[Y_AXIS]));
 
-            if (destination[Z_AXIS] > 0)
-            {
-                if (current_position[Z_AXIS] <= 0)
-                {
-                    current_position[Z_AXIS] = destination[Z_AXIS];
-                    pen_up();
-                }
-            }
-            else
-            {
-                if (current_position[Z_AXIS] > 0)
-                {
-                    current_position[Z_AXIS] = destination[Z_AXIS];
-                    pen_down();
-                }
-            }
+            UpdatePenPosition(newPoints);
 
             if (cartesian_mm <= DEFAULT_XY_MM_PER_STEP) { moveto(newPoints, destination[X_AXIS], destination[Y_AXIS]); return; }
 
@@ -203,10 +192,32 @@ namespace Render3DLib
             for (long s = 0; s <= steps; ++s)
             {
                 scale = (float)s / (float)steps;
-                moveto(newPoints, (destination[X_AXIS] - init_X) * scale + init_X,
+                moveto((destination[X_AXIS] - init_X) * scale + init_X,
                      (destination[Y_AXIS] - init_Y) * scale + init_Y);
             }
             moveto(newPoints, destination[X_AXIS], destination[Y_AXIS]);
+        }
+
+        private static void UpdatePenPosition(List<Point3D> newPoints)
+        {
+            if (destination[Z_AXIS] > 0)
+            {
+                if (current_position[Z_AXIS] <= 0)
+                {
+                    current_position[Z_AXIS] = destination[Z_AXIS];
+                    pen_up();
+                    newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+                }
+            }
+            else
+            {
+                if (current_position[Z_AXIS] > 0)
+                {
+                    current_position[Z_AXIS] = destination[Z_AXIS];
+                    pen_down();
+                    newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+                }
+            }
         }
 
         public static double Hypot2(double x, double y)
@@ -230,6 +241,8 @@ namespace Render3DLib
 
         public static void buffer_arc_to_destination(List<Point3D> newPoints, double[] offset, bool clockwise)
         {
+            UpdatePenPosition(newPoints);
+
             double r_P = -offset[0], r_Q = -offset[1];
             int p_axis = X_AXIS, q_axis = Y_AXIS, l_axis = Z_AXIS;
             double radius = Hypot(r_P, r_Q),
@@ -238,6 +251,7 @@ namespace Render3DLib
                     rt_X = destination[p_axis] - center_P,
                     rt_Y = destination[q_axis] - center_Q;
             double angular_travel = Math.Atan2(r_P * rt_Y - r_Q * rt_X, r_P * rt_X + r_Q * rt_Y);
+
             Serial.println(angular_travel);
 
             if (angular_travel < 0) angular_travel += Radians(360);
@@ -289,6 +303,5 @@ namespace Render3DLib
                 Serial.println(raw[q_axis]);
             }
         }
-
     }
 }
