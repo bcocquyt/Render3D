@@ -14,6 +14,7 @@ using System.Windows.Media.Imaging;
 using System.Windows.Media.Media3D;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using Microsoft.Win32;
 
 namespace HelixRenderer
 {
@@ -74,7 +75,25 @@ namespace HelixRenderer
         private void btnLoadFile_Click(object sender, RoutedEventArgs e)
         {
             //vm.FileName = @"C:\Users\BartCocquyt\source\repos\WalldrawBcocquyt\NC\Dakar A4竖.nc";
-            vm.FileName = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests\output_0012.ngc";
+            //vm.FileName = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests\output_0012.ngc";
+            //vm.FileName = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests\output_0013.ngc";
+
+            var fileContent = string.Empty;
+            var filePath = string.Empty;
+
+            OpenFileDialog openFileDialog = new OpenFileDialog();
+            {
+                openFileDialog.InitialDirectory = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests";
+                openFileDialog.Filter = "nc files (*.nc)|ngc file (*.ngc)|All files (*.*)|*.*";
+                openFileDialog.FilterIndex = 2;
+                openFileDialog.RestoreDirectory = true;
+
+                if (openFileDialog.ShowDialog().Value)
+                {
+                    //Get the path of specified file
+                    vm.FileName = openFileDialog.FileName;
+                }
+            }
         }
 
         private void btnReset_Click(object sender, RoutedEventArgs e)
@@ -106,6 +125,22 @@ namespace HelixRenderer
         private void btnNext5_Click(object sender, RoutedEventArgs e)
         {
             vm.ReadMultipleLines(5);
+        }
+
+        private void btnRunnTillLine_Click(object sender, RoutedEventArgs e)
+        {
+            btnLoadFile_Click(sender, e);
+            vm.ReadMultipleLines(int.Parse(tbLines.Text));
+        }
+
+        private void btnPrev_Click(object sender, RoutedEventArgs e)
+        {
+            if (vm.CurrentLineNumber > 0)
+            {
+                int gotoLine = vm.CurrentLineNumber - 1;
+                btnLoadFile_Click(sender, e);
+                vm.ReadMultipleLines(gotoLine);
+            }
         }
     }
 }

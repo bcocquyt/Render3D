@@ -52,8 +52,10 @@ namespace Render3DLib
                 {
                     switch (int.Parse(gcode_command.Substring(gcode_command.IndexOf('M') + 1, 1)))
                     {
+                        case 2: gcode_M2(); break;
                         case 3: gcode_M3(); break;
-                        case 4: gcode_M5(); break;
+                        case 4: gcode_M4(); break;
+                        case 5: gcode_M5(); break;
                     }
                 }
             }
@@ -95,11 +97,16 @@ namespace Render3DLib
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
                             gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
-                else if (gcode_command.IndexOf('S') > -1) 
+                else if (gcode_command.IndexOf('S') > -1)
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
-                            gcode_command.IndexOf('Y') + 1, 
+                            gcode_command.IndexOf('Y') + 1,
                             gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
+                else if (gcode_command.IndexOf('F') > -1)
+                    Stepper.destination[Stepper.Y_AXIS] =
+                        double.Parse(gcode_command.Substring(
+                            gcode_command.IndexOf('Y') + 1,
+                            gcode_command.IndexOf('F') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
@@ -159,11 +166,16 @@ namespace Render3DLib
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
                             gcode_command.IndexOf('Z') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
-                else if (gcode_command.IndexOf('S') > -1) 
+                else if (gcode_command.IndexOf('S') > -1)
                     Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
-                            gcode_command.IndexOf('Y') + 1, 
+                            gcode_command.IndexOf('Y') + 1,
                             gcode_command.IndexOf('S') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
+                else if (gcode_command.IndexOf('F') > -1)
+                    Stepper.destination[Stepper.Y_AXIS] =
+                        double.Parse(gcode_command.Substring(
+                            gcode_command.IndexOf('Y') + 1,
+                            gcode_command.IndexOf('F') - gcode_command.IndexOf('Y') - 1), CultureInfo.InvariantCulture);
                 else Stepper.destination[Stepper.Y_AXIS] =
                         double.Parse(gcode_command.Substring(
                             gcode_command.IndexOf('Y') + 1, 
@@ -177,10 +189,14 @@ namespace Render3DLib
                 double r = 0,
                       p1 = Stepper.current_position[Stepper.X_AXIS], q1 = Stepper.current_position[Stepper.Y_AXIS],
                       p2 = Stepper.destination[Stepper.X_AXIS], q2 = Stepper.destination[Stepper.Y_AXIS];
-                if (gcode_command.IndexOf('S') > -1) 
+                if (gcode_command.IndexOf('S') > -1)
                     r = double.Parse(gcode_command.Substring(
-                        gcode_command.IndexOf('R') + 1, 
+                        gcode_command.IndexOf('R') + 1,
                         gcode_command.IndexOf('S') - gcode_command.IndexOf('R') - 1), CultureInfo.InvariantCulture);
+                else if (gcode_command.IndexOf('F') > -1)
+                    r = double.Parse(gcode_command.Substring(
+                        gcode_command.IndexOf('R') + 1,
+                        gcode_command.IndexOf('F') - gcode_command.IndexOf('R') - 1), CultureInfo.InvariantCulture);
                 else r = double.Parse(gcode_command.Substring(
                     gcode_command.IndexOf('R') + 1, 
                     gcode_command.Length - gcode_command.IndexOf('R') - 1), CultureInfo.InvariantCulture);
@@ -207,11 +223,16 @@ namespace Render3DLib
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('I') + 1, 
                                 gcode_command.IndexOf('J') - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
-                    else if (gcode_command.IndexOf('S') > -1) 
+                    else if (gcode_command.IndexOf('S') > -1)
                         arc_offset[0] =
                             double.Parse(gcode_command.Substring(
-                                gcode_command.IndexOf('I') + 1, 
+                                gcode_command.IndexOf('I') + 1,
                                 gcode_command.IndexOf('S') - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
+                    else if (gcode_command.IndexOf('F') > -1)
+                        arc_offset[0] =
+                            double.Parse(gcode_command.Substring(
+                                gcode_command.IndexOf('I') + 1,
+                                gcode_command.IndexOf('F') - gcode_command.IndexOf('I') - 1), CultureInfo.InvariantCulture);
                     else arc_offset[0] =
                             double.Parse(gcode_command.Substring(
                                 gcode_command.IndexOf('I') + 1, 
@@ -252,9 +273,19 @@ namespace Render3DLib
             Serial.println("G4");
         }
 
+        public void gcode_M2()
+        {
+            Serial.println("M2");
+        }
+
         public void gcode_M3()
         {
             Serial.println("M3");
+        }
+
+        public void gcode_M4()
+        {
+            Serial.println("M4");
         }
 
         public void gcode_M5()

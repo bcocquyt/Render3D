@@ -127,7 +127,8 @@ namespace Render3DLib
         static void moveto(List<Point3D> newPoints, double target_X, double target_Y)
         {
             moveto(target_X, target_Y);
-            newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+            //newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+            newPoints.Add(new Point3D(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS]));
         }
 
         //直接由当前位置移动到目标位置
@@ -192,8 +193,12 @@ namespace Render3DLib
             for (long s = 0; s <= steps; ++s)
             {
                 scale = (float)s / (float)steps;
-                moveto((destination[X_AXIS] - init_X) * scale + init_X,
-                     (destination[Y_AXIS] - init_Y) * scale + init_Y);
+                if (s == 0)
+                    moveto(newPoints, (destination[X_AXIS] - init_X) * scale + init_X,
+                         (destination[Y_AXIS] - init_Y) * scale + init_Y);
+                else
+                    moveto((destination[X_AXIS] - init_X) * scale + init_X,
+                         (destination[Y_AXIS] - init_Y) * scale + init_Y);
             }
             moveto(newPoints, destination[X_AXIS], destination[Y_AXIS]);
         }

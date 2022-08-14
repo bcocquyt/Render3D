@@ -165,7 +165,18 @@ namespace HelixRenderer
 
         private void UpdateModel()
         {
-            List<Point3D> path = this.points;
+            List<Point3D> path = new List<Point3D>();
+
+            Point3D? prevP = null;
+            foreach (Point3D p in this.points)
+            { 
+                if (prevP != null && prevP == p) continue;
+                path.Add(p);
+                prevP = p;
+            }
+
+            this.points.Clear();
+            this.points.AddRange(path);
 
             // create the WPF3D model
             var m = new Model3DGroup();
@@ -180,7 +191,7 @@ namespace HelixRenderer
 
             if (path.Count > 1)
             {
-                gm.AddTube(path, 0.4, 10, false);
+                gm.AddTube(path, 0.4, 10, false, true, true);
                 //if (directionArrows)
                 //{
                 //    // sphere at the initial point

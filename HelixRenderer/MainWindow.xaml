@@ -16,7 +16,7 @@
             <!-- Remember to add light to the scene -->
             <HelixToolkit:SunLight/>
             <ModelVisual3D Content="{Binding Model}" />
-            <HelixToolkit:GridLinesVisual3D Width="8" Length="8" MinorDistance="1" MajorDistance="1" Thickness="0.01"/>
+            <HelixToolkit:GridLinesVisual3D Width="300" Length="300" MinorDistance="1" MajorDistance="10" Thickness="0.1"/>
         </HelixToolkit:HelixViewport3D>
         <StackPanel Grid.Column="1">
             <Button x:Name="btnForward" Content="Forward"  Click="btnForward_Click" />
@@ -29,6 +29,15 @@
                 <Button x:Name="btnRight" Content="Right" Grid.Column="1" Click="btnRight_Click" />
             </Grid>
             <Button x:Name="btnBackward" Content="Backward" Click="btnBackward_Click" />
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" />
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="btnRunnTillLine" Content="Run Till Line" Click="btnRunnTillLine_Click" Grid.Column="0"/>
+                <TextBox x:Name="tbLines" Text="0" Grid.Column="1"/>
+            </Grid>
+            <Button x:Name="btnPrev" Content="Prev" Click="btnPrev_Click" />
             <Button x:Name="btnNext" Content="Next" Click="btnNext_Click" />
             <Button x:Name="btnNext5" Content="Next 5" Click="btnNext5_Click" />
             <Button x:Name="btnNext10" Content="Next 10" Click="btnNext10_Click" />
