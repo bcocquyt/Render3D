@@ -84,7 +84,7 @@ namespace HelixRenderer
             OpenFileDialog openFileDialog = new OpenFileDialog();
             {
                 openFileDialog.InitialDirectory = @"C:\Users\BartCocquyt\OneDrive - Portima\Documents\Inkscape\WallDrawTests";
-                openFileDialog.Filter = "nc files (*.nc)|ngc file (*.ngc)|All files (*.*)|*.*";
+                openFileDialog.Filter = "nc files (*.nc)|*.nc|ngc files (*.ngc)|*.ngc|All files (*.*)|*.*";
                 openFileDialog.FilterIndex = 2;
                 openFileDialog.RestoreDirectory = true;
 
