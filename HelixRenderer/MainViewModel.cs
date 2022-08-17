@@ -47,6 +47,7 @@ namespace HelixRenderer
         {
             {
                 this.points.Add(p);
+                RemoveDoublePoints();
                 RaisePropertyChanged("Points");
                 UpdateModel();
             }
@@ -56,6 +57,7 @@ namespace HelixRenderer
         {
             {
                 this.points.AddRange(newPoints);
+                RemoveDoublePoints();
                 RaisePropertyChanged("Points");
                 UpdateModel();
             }
@@ -163,13 +165,12 @@ namespace HelixRenderer
             }
         }
 
-        private void UpdateModel()
+        public void RemoveDoublePoints()
         {
             List<Point3D> path = new List<Point3D>();
-
             Point3D? prevP = null;
             foreach (Point3D p in this.points)
-            { 
+            {
                 if (prevP != null && prevP == p) continue;
                 path.Add(p);
                 prevP = p;
@@ -177,6 +178,13 @@ namespace HelixRenderer
 
             this.points.Clear();
             this.points.AddRange(path);
+        }
+
+        private void UpdateModel()
+        {
+            List<Point3D> path = new List<Point3D>();
+
+            path.AddRange(this.points);
 
             // create the WPF3D model
             var m = new Model3DGroup();

@@ -127,8 +127,8 @@ namespace Render3DLib
         static void moveto(List<Point3D> newPoints, double target_X, double target_Y)
         {
             moveto(target_X, target_Y);
-            //newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
-            newPoints.Add(new Point3D(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS]));
+            newPoints.Add(new Point3D(current_position[X_AXIS], current_position[Y_AXIS], current_position[Z_AXIS]));
+            //newPoints.Add(new Point3D(destination[X_AXIS], destination[Y_AXIS], destination[Z_AXIS]));
         }
 
         //直接由当前位置移动到目标位置
@@ -281,7 +281,7 @@ namespace Render3DLib
 
             int arc_recalc_count = N_ARC_CORRECTION;
 
-            for (int i = 1; i < segments; i++)
+            for (int i = 0; i < segments; i++)
             {
                 if (--arc_recalc_count > 0)
                 {

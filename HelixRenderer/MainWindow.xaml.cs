@@ -138,7 +138,8 @@ namespace HelixRenderer
             if (vm.CurrentLineNumber > 0)
             {
                 int gotoLine = vm.CurrentLineNumber - 1;
-                btnLoadFile_Click(sender, e);
+                string oldFileName = vm.FileName;
+                vm.FileName = oldFileName;
                 vm.ReadMultipleLines(gotoLine);
             }
         }
